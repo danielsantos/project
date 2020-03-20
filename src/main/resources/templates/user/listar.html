@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/LayoutPadrao">
+	
+<head>
+	<title>Sistema Estoque</title>
+</head>
+
+<body>
+<section layout:fragment="conteudo">
+
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-xs-10">
+					<h1>
+						Listagem de Clientes
+					</h1>
+				</div>
+			
+				<div class="col-xs-2">
+					<div class="aw-page-header-controls">
+						<a class="btn btn-primary" th:href="@{/novo}">
+							<i class="fa  fa-plus-circle"></i> <span class="hidden-xs  hidden-sm">Novo Cliente</span>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid">
+		
+		<!-- PESQUISA -->
+		<form method="get" th:action="@{/pesquisar}" class="form-vertical  js-form-loading">
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label for="input-produto-preco">Pesquisa</label>
+						<div class="form-inline">
+							<input name="name" type="text" class="form-control  aw-form-control-inline-sm" placeholder="Nome"/>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<button class="btn  btn-primary" type="submit">Pesquisar</button>
+				<a th:href="@{/}" class="btn  btn-default">Limpar filtro</a>
+			</div>
+		</form>
+		<br/>
+		
+		<div class="table-responsive">
+			<table id="tabela-user" class="table  table-striped  table-bordered  table-hover  table-condensed  js-sticky-table">
+				<thead class="aw-table-header-solid">
+					<tr>
+						<th>#</th>
+						<th>Nome</th>
+						<th>CPF/CNPJ</th>
+						<th>Estado</th>
+						<th>Ações</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr id="count" th:each="user : ${users}">
+						<td th:text="${user.id}"></td>
+						<td th:text="${user.name}"></td>
+						<td th:text="${user.documento}" class="table-pesq-produto-col-preco"></td>
+						<td th:text="${user.uf}" class="table-pesq-produto-col-estoque"></td>
+						<td class="table-pesq-produto-col-acoes">
+						
+							<div class="btn-group">
+								<a th:href="@{/visualizar/{id}(id=${user.id})}" class="btn  btn-default btn-xs">
+									<i class="fa  fa-fw  fa-eye"></i>
+								</a>
+							
+								<a th:href="@{/atualizar/{id}(id=${user.id})}" class="btn  btn-default btn-xs">
+									<i class="fa  fa-pencil"></i>
+								</a>
+								
+								<a th:href="@{/excluir/{id}(id=${user.id})}" class="btn  btn-default btn-xs">
+									<i class="fa  fa-trash"></i>
+								</a>
+							</div>
+						
+						</td>
+					</tr>
+					<tr id="not-count" th:if="${users.empty}">
+						<td colspan="6">Nenhum cliente encontrado.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+			
+		<div class="row">
+			<div class="col-xs-12  col-md-8  aw-text-xs-center  aw-text-md-left">
+				<nav>
+					<ul class="pagination  pagination-sm">
+						<li><a href="#"><i class="fa  fa-angle-double-left"></i></a></li>
+						<li class="active"><a href="#">1</a></li>
+						<li><a href="#">2</a></li>
+						<li><a href="#">3</a></li>
+						<li><a href="#">4</a></li>
+						<li><a href="#">5</a></li>
+						<li><a href="#"><i class="fa  fa-angle-double-right"></i></a></li>
+					</ul>
+				</nav>
+			</div>
+			<div class="col-xs-12  col-md-4  aw-text-xs-center  aw-text-md-right">
+				<span class="aw-pagination-info">
+					<script>
+						var row = document.getElementById("tabela-user").rows.length;
+						document.write("<b>" + (row - 1) + "</b>" + " Clientes cadastrados");
+					</script>
+				</span>
+			</div>
+		</div>
+	</div>
+
+</section>
+</body>
+</html>

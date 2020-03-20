@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/LayoutPadrao">
+	
+<head>
+	<title>Sistema Estoque</title>
+</head>
+
+<body>
+<section layout:fragment="conteudo">
+
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-xs-10">
+				
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid">
+		<div class="table-responsive">
+		
+			<div>
+				<h2 th:text="${user.name}"></h2>
+				<hr/>
+			</div>
+		
+			<table id="tabela-user" class="table  table-striped  table-bordered  table-hover  table-condensed  js-sticky-table">
+				<thead class="aw-table-header-solid">
+					<tr>
+						<td style="padding-bottom: 10px;"><b>Código: </b></td>
+						<td style="padding-left: 10px; padding-bottom: 10px;" th:text="${user.id}"></td>
+					</tr>
+					<tr>
+						<td style="padding-bottom: 10px;"><b>CPF/CNPJ: </b></td>
+						<td style="padding-left: 10px; padding-bottom: 10px;" th:text="${user.documento}"></td>
+					</tr>
+					
+					<tr>
+						<td style="padding-bottom: 10px;"><b>Telefone: </b></td>
+						<td style="padding-left: 10px; padding-bottom: 10px;" th:text="${user.telefoneFixo}"></td>
+					</tr>
+					<tr>
+						<td style="padding-bottom: 10px;"><b>Celular: </b></td>
+						<td style="padding-left: 10px; padding-bottom: 10px;" th:text="${user.celular}"></td>
+					</tr>
+					<tr>
+						<td style="padding-bottom: 10px;"><b>Endereço: </b></td>
+						<td style="padding-left: 10px; padding-bottom: 10px;" th:text="${user.endereco}"></td>
+					</tr>
+					<tr>
+						<td style="padding-bottom: 10px;"><b>Cidade: </b></td>
+						<td style="padding-left: 10px; padding-bottom: 10px;" th:text="${user.cidade}"></td>
+					</tr>
+					<tr>
+						<td style="padding-bottom: 10px;"><b>Bairro: </b></td>
+						<td style="padding-left: 10px; padding-bottom: 10px;" th:text="${user.bairro}"></td>
+					</tr>
+					<tr>
+						<td style="padding-bottom: 10px;"><b>Estado: </b></td>
+						<td style="padding-left: 10px; padding-bottom: 10px;" th:text="${user.uf}"></td>
+					</tr>
+					<tr>
+						<td style="padding-bottom: 10px;"><b>CEP: </b></td>
+						<td style="padding-left: 10px; padding-bottom: 10px;" th:text="${user.cep}"></td>
+					</tr>					
+					<tr>
+						<td style="padding-bottom: 10px;"><b>Email: </b></td>
+						<td style="padding-left: 10px; padding-bottom: 10px;" th:text="${user.email}"></td>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- Não utilizado -->
+				</tbody>
+			</table>
+			
+			<div class="form-group">
+				<a th:href="@{/atualizar/{codigo}(codigo=${user.id})}" class="btn  btn-primary" type="submit">Editar</a>
+				<a th:href="@{/excluir/{codigo}(codigo=${user.id})}" class="btn  btn-primary" type="submit">Excluir</a>
+				<a th:href="@{/}" class="btn  btn-default">Voltar</a>
+			</div>
+		</div>
+	</div>
+
+</section>
+</body>
+</html>

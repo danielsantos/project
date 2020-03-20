@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:th="http://www.thymeleaf.org"
+	layout:decorator="layout/LayoutSimples">
+
+<th:block layout:fragment="conteudo">
+
+	<form th:action="@{/ativar}" method="POST" th:object="${obj}">
+	
+		<div class="aw-simple-panel">
+			<h3>Sistema Estoque</h3>
+			
+			<div class="aw-simple-panel__message">
+				Por favor, digite o código de ativação.
+			</div>
+			
+			<div class="aw-simple-panel__box">
+				<div class="form-group  has-feedback">
+					<input type="text" class="form-control  input-lg" th:field="*{codigoAtivacao}" placeholder="Código de Ativação" autofocus="autofocus"  />
+					<span class="glyphicon  glyphicon-envelope  form-control-feedback"></span>
+				</div>
+				
+				<div class="form-group">
+					<button type="submit" class="btn  btn-primary  btn-lg  aw-btn-full-width">Enviar</button>
+				</div>
+			</div>
+		</div>
+		
+	</form>
+	
+</th:block>
+
+</html>

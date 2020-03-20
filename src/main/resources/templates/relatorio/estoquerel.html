@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns="http://www.w3.org/1999/xhtml" 
+	  xmlns:th="http://www.thymeleaf.org">
+	
+<head>
+	<title>Sistema Estoque</title>
+</head>
+<body>
+	<div align="center">
+		
+		<h1>Relatório de Estoque</h1>
+		
+		<span th:text="${data}"></span>
+		
+		<hr/>
+		
+		<table border="1" style="margin-top: 20px; width: 90%; font-size: 16" dir="ltr" summary="purpose/structure for speech output">
+		<colgroup width="20%" />
+		<colgroup id="colgroup" class="colgroup" align="center" 
+			      valign="middle" title="title" width="1*" 
+			      span="6" style="background:#ddd;" />
+			<thead>
+				<tr>
+					<th scope="col">Produto</th>
+					<th scope="col">Custo Unit</th>
+					<th width="12%" scope="col">Val. Venda Unit</th>
+					<th scope="col">Qtd</th>
+					<th scope="col">Custo Total</th>
+					<th scope="col">Val. Venda Total</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="obj : ${list}">
+					<td><span th:text="${obj.codigo}"></span> - <span th:text="${obj.nome}"></span></td>
+					<td align="center" th:text="${obj.custoUnitario}"></td>
+					<td align="center" th:text="${obj.valorVendaUnitario}"></td>
+					<td align="center" th:text="${obj.quantidadeTotal}"></td>
+					<td align="center" th:text="${obj.custoUnitarioTotal}"></td>
+					<td align="center" th:text="${obj.valorVendaUnitarioTotal}"></td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<br/><br/>
+		
+		<table style="width: 90%">
+			<tr>
+				<td width="65%" align="right">Totais</td>
+				<td align="center">Custo Unitário</td>
+				<td align="center">Valor de Venda Unitário</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td align="center" th:text="${custoUnitarioTotal}"></td>
+				<td align="center" th:text="${valorVendaUnitarioTotal}"></td>
+			</tr>	
+		</table>
+		
+		<br/><br/>
+		
+		<a href="#" onclick="window.print()">Imprimir</a>
+		
+	</div>
+</body>
+</html>

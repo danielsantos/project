@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/LayoutPadrao">
+	
+<head>
+	<title>Sistema Estoque</title>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		var mask = {
+		 money: function() {
+		 	var el = this
+		 	,exec = function(v) {
+		 	v = v.replace(/\D/g,"");
+		 	v = new String(Number(v));
+		 	var len = v.length;
+		 	if (1== len)
+		 	v = v.replace(/(\d)/,"0.0$1");
+		 	else if (2 == len)
+		 	v = v.replace(/(\d)/,"0.$1");
+		 	else if (len > 2) {
+		 	v = v.replace(/(\d{2})$/,'.$1');
+		 	}
+		 	return v;
+		 	};
+		
+		 	setTimeout(function(){
+		 	el.value = exec(el.value);
+		 	},1);
+		 }
+		
+		}
+		
+		$(function(){
+			$('#custoUnitario').bind('keypress',mask.money)
+			$('#valorVendaUnitario').bind('keypress',mask.money)
+		});
+	</script>
+</head>
+
+<body>
+<section layout:fragment="conteudo">
+
+	<div class="page-header">
+		<div class="container-fluid">
+			<h1>
+				Cadastrar Novo Produto
+			</h1>
+		</div>
+	</div>
+
+	<div class="container-fluid">
+
+		<form method="POST" th:action="@{/produto/salvar}" th:object="${produto}" class="form-vertical  js-form-loading">
+
+			<!-- MENSAGEM DE SUCESSO -->
+    		<div class="alert alert-success" th:if="${!#strings.isEmpty(mensagem)}">
+	    		<span th:text="${mensagem}"></span>
+	    		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    				<span aria-hidden="true">&times;</span>
+    			</button>
+    		</div>
+    		
+    		<!-- ALERTA DE CAMPOS VALIDADOS-->
+    		<div class="alert alert-danger" th:if="${#fields.hasAnyErrors()}">
+	    		 <div th:each="error : ${#fields.detailedErrors()}">
+	    			<span th:text="${error.message}"></span>
+	    		</div>
+    		</div>
+    		
+    		<div class="alert alert-danger" th:if="${msgError != null}">
+	    		<span th:text="${msgError}"></span>
+    		</div>
+    		
+
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group" th:classappend="${#fields.hasErrors('codigo')} ? has-error">
+						<label for="name">Código</label>
+						<input id="name" th:field="*{codigo}" type="text" class="form-control" placeholder="Código"/>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group" th:classappend="${#fields.hasErrors('nome')} ? has-error">
+						<label for="name">Nome</label>
+						<input id="name" th:field="*{nome}" type="text" class="form-control" placeholder="Nome"/>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group" th:classappend="${#fields.hasErrors('descricao')} ? has-error">
+						<label for="name">Descrição</label>
+						<textarea rows="5" cols="80" th:field = "*{descricao}" class="form-control" placeholder="Descrição" maxlength="500"></textarea>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group" th:classappend="${#fields.hasErrors('quantidadeTotal')} ? has-error">
+						<label for="quantidadeTotal">Quant. em Estoque</label>
+						<input id="quantidadeTotal" th:field="*{quantidadeTotal}" type="number" 
+						       class="form-control" placeholder="Quant. em Estoque" style="width: 20%" />
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group" th:classappend="${#fields.hasErrors('custoUnitario')} ? has-error">
+						<label for="name">Custo Unitário</label>
+						<input id="custoUnitario" th:field="*{custoUnitario}" type="text" 
+						       class="form-control" placeholder="Custo Unitário" style="width: 20%"/>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group" th:classappend="${#fields.hasErrors('valorVendaUnitario')} ? has-error">
+						<label for="name">Valor de Venda Unitário</label>
+						<input id="valorVendaUnitario" th:field="*{valorVendaUnitario}" type="text" 
+						       class="form-control" placeholder="Valor de Venda Unitário" style="width: 20%"/>
+					</div>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<button class="btn  btn-primary" type="submit">Salvar</button>
+				<a th:href="@{/produto/listar}" class="btn  btn-default">Voltar</a>
+			</div>
+		</form>
+	</div>
+
+</section>
+</body>
+</html>

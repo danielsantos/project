@@ -1,0 +1,6 @@
+[ ] pom.xml                     (disable - spring-boot-starter-security)
+[ ] application.properties      (disable - group connection local)
+[ ] SysEstoqueApplication       (disable - initializer SpringBootServletInitializer)
+[ ] LoginController.java        (disable all)
+[ ] WebSecurityConfig.java      (disable all)
+[ ] UserDetailsServiceImpl.java (disable all)

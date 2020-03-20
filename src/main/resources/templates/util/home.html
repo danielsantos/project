@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:th="http://www.thymeleaf.org"
+	layout:decorator="layout/LayoutSimples">
+
+<th:block layout:fragment="conteudo">
+	
+	<div class="aw-simple-panel">
+	
+		<h3>Sistema Estoque</h3>
+		
+		<div class="aw-simple-panel__message  is-error" th:if="${msgSucesso != null}">
+			<div class="alert alert-success">
+				<strong><span th:text="${msgSucesso}"></span></strong>
+			</div>
+		</div>
+		
+		<div class="aw-simple-panel__message  is-error" th:if="${msgError != null}">
+			<div class="alert alert-danger">
+				<strong><span th:text="${msgError}"></span></strong>
+			</div>
+		</div>
+		
+		<h2><a th:href="@{/}">Iniciar</a></h2>
+
+	</div>
+	
+</th:block>
+
+</html>

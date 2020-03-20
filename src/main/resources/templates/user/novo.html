@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/LayoutPadrao">
+	
+<head>
+	<title>Sistema Estoque</title>
+</head>
+
+<body>
+<section layout:fragment="conteudo">
+
+	<div class="page-header">
+		<div class="container-fluid">
+			<h1>
+				Cadastrar Novo Cliente
+			</h1>
+		</div>
+	</div>
+
+	<div class="container-fluid">
+
+		<form method="POST" th:action="@{/salvar}" th:object="${user}" class="form-vertical  js-form-loading">
+
+			<!-- MENSAGEM DE SUCESSO -->
+    		<div class="alert alert-success" th:if="${!#strings.isEmpty(mensagem)}">
+	    		<span th:text="${mensagem}"></span>
+	    		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    				<span aria-hidden="true">&times;</span>
+    			</button>
+    		</div>
+    		
+    		<!-- ALERTA DE CAMPOS VALIDADOS-->
+    		<div class="alert alert-danger" th:if="${#fields.hasAnyErrors()}">
+	    		 <div th:each="error : ${#fields.detailedErrors()}">
+	    			<span th:text="${error.message}"></span>
+	    		</div>
+    		</div>
+			
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group" th:classappend="${#fields.hasErrors('name')} ? has-error">
+						<label for="name">Nome</label>
+						<input id="name" th:field="*{name}" type="text" class="form-control" placeholder="Nome"/>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-3">
+					<div class="form-group" th:classappend="${#fields.hasErrors('documento')} ? has-error">
+						<label for="documento">CPF/CNPJ</label>
+						<input id="documento" th:field="*{documento}" type="text" class="form-control" placeholder="CPF/CNPJ"/>
+					</div>
+				</div>
+				
+				<div class="col-sm-3">
+					<div class="form-group" th:classappend="${#fields.hasErrors('email')} ? has-error">
+						<label for="email">Email</label>
+						<input id="email" th:field="*{email}" type="text" class="form-control" placeholder="Email"/>
+					</div>
+				</div>
+			</div>				
+			
+			<div class="row">
+				<div class="col-sm-3">
+					<div class="form-group" th:classappend="${#fields.hasErrors('telefoneFixo')} ? has-error">
+						<label for="telefoneFixo">Telefone</label>
+						<input id="telefoneFixo" th:field="*{telefoneFixo}" type="text" class="form-control" placeholder="Telefone Fixo"/>
+					</div>
+				</div>
+				
+				<div class="col-sm-3">
+					<div class="form-group" th:classappend="${#fields.hasErrors('celular')} ? has-error">
+						<label for="celular">Celular</label>
+						<input id="celular" th:field="*{celular}" type="text" class="form-control" placeholder="Celular"/>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-3">
+					<div class="form-group" th:classappend="${#fields.hasErrors('endereco')} ? has-error">
+						<label for="endereco">Endereco</label>
+						<input id="endereco" th:field="*{endereco}" type="text" class="form-control" placeholder="Endereco"/>
+					</div>
+				</div>
+
+				<div class="col-sm-3">
+					<div class="form-group" th:classappend="${#fields.hasErrors('cidade')} ? has-error">
+						<label for="cidade">Cidade</label>
+						<input id="cidade" th:field="*{cidade}" type="text" class="form-control" placeholder="Cidade"/>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-3">
+					<div class="form-group" th:classappend="${#fields.hasErrors('bairro')} ? has-error">
+						<label for="bairro">Bairro</label>
+						<input id="bairro" th:field="*{bairro}" type="text" class="form-control" placeholder="Bairro"/>
+					</div>
+				</div>
+
+				<div class="col-sm-3">
+					<div class="form-group" th:classappend="${#fields.hasErrors('uf')} ? has-error">
+						<label for="uf">UF</label>
+						<select id="uf" th:field="*{uf}" class="form-control">
+							<option value=''>Selecione</option>
+							<option value='AC'>Acre</option>
+							<option value='AL'>Alagoas</option>
+							<option value='AP'>Amapá</option>
+							<option value='AM'>Amazonas</option>
+							<option value='BA'>Bahia</option>
+							<option value='CE'>Ceará</option>
+							<option value='DF'>Distrito Federal</option>
+							<option value='ES'>Espírito Santo</option>
+							<option value='GO'>Goiás</option>
+							<option value='MA'>Maranhão</option>
+							<option value='MT'>Mato Grosso</option>
+							<option value='MS'>Mato Grosso do Sul</option>
+							<option value='MG'>Minas Gerais</option>
+							<option value='PA'>Pará</option>
+							<option value='PB'>Paraíba</option>
+							<option value='PR'>Paraná</option>
+							<option value='PE'>Pernambuco</option>
+							<option value='PI'>Piauí</option>
+							<option value='RJ'>Rio de Janeiro</option>
+							<option value='RN'>Rio Grande do Norte</option>
+							<option value='RS'>Rio Grande do Sul</option>
+							<option value='RO'>Rondônia</option>
+							<option value='RR'>Roraima</option>
+							<option value='SC'>Santa Catarina</option>
+							<option value='SP'>São Paulo</option>
+							<option value='SE'>Sergipe</option>
+							<option value='TO'>Tocantins</option>
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-3">
+					<div class="form-group" th:classappend="${#fields.hasErrors('cep')} ? has-error">
+						<label for="cep">CEP</label>
+						<input id="cep" th:field="*{cep}" type="text" class="form-control" placeholder="CEP"/>
+					</div>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<button class="btn  btn-primary" type="submit">Salvar</button>
+				<a th:href="@{/}" class="btn  btn-default">Voltar</a>
+			</div>
+		</form>
+	</div>
+
+</section>
+</body>
+</html>

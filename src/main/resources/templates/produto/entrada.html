@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/LayoutPadrao">
+	
+<head>
+	<title>Sistema Estoque</title>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		var mask = {
+		 money: function() {
+		 	var el = this
+		 	,exec = function(v) {
+		 	v = v.replace(/\D/g,"");
+		 	v = new String(Number(v));
+		 	var len = v.length;
+		 	if (1== len)
+		 	v = v.replace(/(\d)/,"0.0$1");
+		 	else if (2 == len)
+		 	v = v.replace(/(\d)/,"0.$1");
+		 	else if (len > 2) {
+		 	v = v.replace(/(\d{2})$/,'.$1');
+		 	}
+		 	return v;
+		 	};
+		
+		 	setTimeout(function(){
+		 	el.value = exec(el.value);
+		 	},1);
+		 }
+		
+		}
+		
+		$(function(){
+			$('#custoUnitario').bind('keypress',mask.money)
+			$('#valorVendaUnitario').bind('keypress',mask.money)
+		});
+	</script>
+</head>
+
+<body>
+<section layout:fragment="conteudo">
+
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-xs-10">
+					<h1>
+						Entrada de Estoque
+					</h1>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid">
+	
+		<form th:action="@{/estoque/entrada/pesquisar}" th:object="${dto}" class="form-vertical  js-form-loading" method="POST">
+	
+    		<div class="alert alert-success" th:if="${!#strings.isEmpty(mensagem)}">
+	    		<span th:text="${mensagem}"></span>
+	    		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    				<span aria-hidden="true">&times;</span>
+    			</button>
+    		</div>
+		
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label for="input-produto-preco">Código:</label>
+						<div class="form-inline">
+							<input th:field="*{codigoProduto}" type="text" class="form-control  aw-form-control-inline-sm" placeholder="Código"/>
+							<button class="btn  btn-primary" type="submit" style="margin-left: 10px">Pesquisar</button>							       
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</form>
+		
+		<form th:action="@{/estoque/entrada/salvar}" th:object="${produto}" class="form-vertical js-form-loading" method="POST">
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label for="input-produto-preco">Produto:</label>
+						<label for="input-produto-preco" style="margin-left: 134px;">Quant. em Estoque:</label>
+						<div class="form-inline">
+							<input th:field="*{nome}" type="text" class="form-control  aw-form-control-inline-sm" readonly="readonly" />
+							<input th:field="*{quantidadeTotal}" type="text" class="form-control  aw-form-control-inline-sm" readonly="readonly" style="margin-left: 10px;" />
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label for="input-produto-preco">Quant. para Entrada:</label>
+						<label for="input-produto-preco" style="margin-left: 74px;">Valor de Venda Unitario:</label>
+						<div class="form-inline">
+							<input th:field="*{qtdParaBaixa}" type="number" class="form-control  aw-form-control-inline-sm" />
+							<input th:field="*{valorVendaUnitario}" id="valorVendaUnitario" type="text" class="form-control  aw-form-control-inline-sm" style="margin-left: 10px;" />
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label for="input-produto-preco">Custo Unitário:</label>
+						<div class="form-inline">
+							<input th:field="*{custoUnitario}" id="custoUnitario" type="text" class="form-control  aw-form-control-inline-sm" />
+							<button class="btn  btn-primary" type="submit" style="margin-left: 10px">Adicionar</button>	
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<input type="hidden" th:field="*{id}"/>
+		</form>
+		
+	</div>
+
+</section>
+</body>
+</html>
