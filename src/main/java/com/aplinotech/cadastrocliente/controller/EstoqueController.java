@@ -5,21 +5,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.aplinotech.cadastrocliente.model.*;
+import com.aplinotech.cadastrocliente.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.aplinotech.cadastrocliente.model.Baixa;
-import com.aplinotech.cadastrocliente.model.Entrada;
-import com.aplinotech.cadastrocliente.model.ItemBaixa;
-import com.aplinotech.cadastrocliente.model.Produto;
 import com.aplinotech.cadastrocliente.model.dto.PesquisarProdutoDTO;
 import com.aplinotech.cadastrocliente.service.impl.BaixaServiceImpl;
 import com.aplinotech.cadastrocliente.service.impl.EntradaServiceImpl;
@@ -45,8 +41,11 @@ public class EstoqueController {
 
 	@Autowired
 	private ItemBaixaServiceImpl itemBaixaServiceImpl;
-	
-	
+
+	@Autowired
+	private UserService userService;
+
+
 	@RequestMapping(value = "/entrada")
 	public ModelAndView entrada(){
 		
@@ -61,17 +60,13 @@ public class EstoqueController {
 	}
 	
 	@RequestMapping(value = "/entrada/pesquisar", method = RequestMethod.POST)
-	public ModelAndView entradaPesquisar(@ModelAttribute("dto") PesquisarProdutoDTO dto) {
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return new ModelAndView("login/expirado");
-		
-		Produto produto = produtoServiceImpl.findByCodigoAndActive(dto.getCodigoProduto());
+	public ModelAndView entradaPesquisar(@ModelAttribute("dto") PesquisarProdutoDTO dto, HttpServletRequest req) {
+		Usuario usuario = userService.findByUsername(req.getRemoteUser());
+		Produto produto = produtoServiceImpl.findByCodigoAndActive(dto.getCodigoProduto(), usuario);
 		ModelAndView mv = new ModelAndView("produto/entrada");
 		mv.addObject("dto", new PesquisarProdutoDTO());
 		mv.addObject("produto", produto);
 		return mv;
-		
 	}
 	
 	@RequestMapping(value = "/entrada/salvar", method = RequestMethod.POST)
@@ -239,12 +234,12 @@ public class EstoqueController {
 		
 	}
 	
-	@RequestMapping(value = "/pesquisar", method = RequestMethod.POST)
-	public String baixa(@ModelAttribute("dto") PesquisarProdutoDTO dto, ModelMap modelMap, HttpSession session) {
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return "login/expirado";
-		
+	@PostMapping("/pesquisar")
+	public String baixa(@ModelAttribute("dto") PesquisarProdutoDTO dto, ModelMap modelMap, HttpSession session,
+						HttpServletRequest req) {
+
+		Usuario usuario = userService.findByUsername(req.getRemoteUser());
+
 		Baixa baixa = new Baixa();
 		
 		if ( session.getAttribute("baixa") == null ) {
@@ -267,7 +262,7 @@ public class EstoqueController {
 			
 		}
 		
-		Produto produto = produtoServiceImpl.findByCodigoAndActive(dto.getCodigoProduto());
+		Produto produto = produtoServiceImpl.findByCodigoAndActive(dto.getCodigoProduto(), usuario);
 		
 		// TODO retorna msg de erro caso nao encontre o produto
 		
@@ -280,11 +275,10 @@ public class EstoqueController {
 	}
 	
 	@RequestMapping("/retorna/produto/{codigo}") 
-	public String retornaProdutoPesquisadoPorNome(@PathVariable(value = "codigo") String codigo, ModelMap modelMap, HttpSession session) {
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return "login/expirado";
-		
+	public String retornaProdutoPesquisadoPorNome(@PathVariable(value = "codigo") String codigo, ModelMap modelMap,
+												  HttpSession session, HttpServletRequest req) {
+
+		Usuario usuario = userService.findByUsername(req.getRemoteUser());
 		Baixa baixa = new Baixa();
 		
 		if ( session.getAttribute("baixa") == null ) {
@@ -307,7 +301,7 @@ public class EstoqueController {
 			
 		}
 		
-		Produto produto = produtoServiceImpl.findByCodigoAndActive(codigo);
+		Produto produto = produtoServiceImpl.findByCodigoAndActive(codigo, usuario);
 		
 		modelMap.addAttribute("produtosBaixa", baixa.getProdutos());
 		modelMap.addAttribute("dto", new PesquisarProdutoDTO());
@@ -321,10 +315,6 @@ public class EstoqueController {
 	@RequestMapping(value = "/baixa", method = RequestMethod.GET)
 	public String baixa(ModelMap modelMap, HttpSession session) {
 		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return "login/expirado";
-		
-		//List<Produto> list = new ArrayList<Produto>();
 		Baixa baixa = new Baixa();
 		
 		if ( session.getAttribute("baixa") == null ) {
@@ -353,41 +343,26 @@ public class EstoqueController {
 		modelMap.addAttribute("produto", new Produto());
 		modelMap.addAttribute("baixa", baixa);
 		return "produto/baixa";
-		
 	}
 	
 	@RequestMapping(value = "/consultar/produto/nome/form")
 	public ModelAndView consultaProdutoForm() {
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return new ModelAndView("login/expirado");
-		
 		ModelAndView mv = new ModelAndView("estoque/listar");
 		mv.addObject("produtos", new ArrayList<Produto>());
 	    mv.addObject("dto", new PesquisarProdutoDTO());		
 		return mv;
-		
 	}
 	
-	@RequestMapping(value = "/consultar/produto/nome", method = RequestMethod.POST)
-	public String consultaProduto(@ModelAttribute("dto") PesquisarProdutoDTO dto, ModelMap modelMap, HttpSession session) {
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return "login/expirado";
-		
+	@PostMapping("/consultar/produto/nome")
+	public String consultaProduto(@ModelAttribute("dto") PesquisarProdutoDTO dto, ModelMap modelMap, HttpServletRequest req) {
+		Usuario usuario = userService.findByUsername(req.getRemoteUser());
 		if ( !"".equals(dto.getNome()) ) {
-			
-			modelMap.addAttribute("produtos", produtoServiceImpl.findByNome(dto. getNome()));
-			
-		} else { 
-
+			modelMap.addAttribute("produtos", produtoServiceImpl.findByNome(dto.getNome(), usuario.getId()));
+		} else {
 			modelMap.addAttribute("produtos", produtoServiceImpl.findAllActive());
-			
 		}
-			
-	    modelMap.addAttribute("dto", new PesquisarProdutoDTO());		
+	    modelMap.addAttribute("dto", new PesquisarProdutoDTO());
 		return "estoque/listar";
-		
 	}
 
 }

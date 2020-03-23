@@ -1,4 +1,3 @@
-/*
 package com.aplinotech.cadastrocliente.service;
 
 import java.util.HashSet;
@@ -40,4 +39,3 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
 }
-*/

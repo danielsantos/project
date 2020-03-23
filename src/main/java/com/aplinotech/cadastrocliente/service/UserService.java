@@ -10,6 +10,8 @@ public interface UserService {
 	
 	List<Usuario> findByNome(String nome);
 
+    Usuario findByUsername(String username);
+
     void saveUser(Usuario user);
  
     void updateUser(Usuario user);

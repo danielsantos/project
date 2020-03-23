@@ -15,7 +15,7 @@ import com.aplinotech.cadastrocliente.model.Setup;
 public interface InstalacaoRepository extends JpaRepository<Setup, Long> {
 	
 	@Modifying
-	@Query(value="INSERT INTO SETUP ( ID , DATA_PRIMEIRO_ACESSO , DATA_EXPIRACAO ) "
+	@Query(value="INSERT INTO setup ( ID , DATA_PRIMEIRO_ACESSO , DATA_EXPIRACAO ) "
 			   + " VALUES ( 1 , CURRENT_TIMESTAMP , ?1 )", nativeQuery = true)
 	@Transactional
     void insereSetup(Date dataExpiracao);

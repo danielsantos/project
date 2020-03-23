@@ -3,8 +3,11 @@ package com.aplinotech.cadastrocliente.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.aplinotech.cadastrocliente.model.Usuario;
+import com.aplinotech.cadastrocliente.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -30,26 +33,23 @@ public class ProdutoController {
 	
 	@Autowired
 	private SetupServiceImpl setupServiceImpl;
-	
+
+	@Autowired
+	private UserServiceImpl userService;
+
 	
 	@RequestMapping(value = "/novo", method = RequestMethod.GET)
 	public ModelAndView novo(){
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return new ModelAndView("login/expirado");
-		
 		ModelAndView mv = new ModelAndView("produto/novo");
 		mv.addObject("produto", new Produto());
 		return mv;
-		
 	}
 	
 	@RequestMapping(value = "/salvar", method = RequestMethod.POST)
-	public ModelAndView salvar(@ModelAttribute(value = "produto") Produto produto, Errors errors, ModelMap modelMap){
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return new ModelAndView("login/expirado");
-		
+	public ModelAndView salvar(@ModelAttribute(value = "produto") Produto produto, Errors errors, ModelMap modelMap,
+							   HttpServletRequest req) {
+
+		Usuario usuario = userService.findByUsername(req.getRemoteUser());
 		ModelAndView mv = new ModelAndView("produto/novo");
 		
 		if (produto.getCodigo() == null || "".equals(produto.getCodigo())) {
@@ -58,7 +58,7 @@ public class ProdutoController {
 			return mv;
 		}
 		
-		Produto prod = produtoServiceImpl.findByCodigo(produto.getCodigo());
+		Produto prod = produtoServiceImpl.findByCodigo(produto.getCodigo(), usuario.getId());
 		if (prod != null) {
 			modelMap.addAttribute("produto", produto);
 			modelMap.addAttribute("msgError", "O Código '" + produto.getCodigo() + "' já está cadastrado para outro Produto.");
@@ -70,6 +70,7 @@ public class ProdutoController {
 			return mv;
 		} else {
 			produto.setStatus("A"); // TODO criar um enum
+			produto.setUsuario(usuario);
 			produtoServiceImpl.saveOrUpdate(produto);
 			mv.addObject("mensagem", "Produto cadastrado com sucesso!");
 			modelMap.addAttribute("produto", new Produto());
@@ -79,22 +80,16 @@ public class ProdutoController {
 	}
 	
 	@RequestMapping(value = "/atualizar/{codigo}", method = RequestMethod.GET)
-	public ModelAndView alterar(@PathVariable(value = "codigo") String codigo){
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return new ModelAndView("login/expirado");
-		
+	public ModelAndView alterar(@PathVariable(value = "codigo") String codigo, HttpServletRequest req){
 		ModelAndView mv = new ModelAndView("produto/atualizar");
-		mv.addObject("produto", produtoServiceImpl.findByCodigoAndActive(codigo));
+		Usuario usuario = userService.findByUsername(req.getRemoteUser());
+		mv.addObject("produto", produtoServiceImpl.findByCodigoAndActive(codigo, usuario));
 		return mv;
-		
 	}
 	
 	@RequestMapping(value = "/alterar", method = RequestMethod.POST)
-	public ModelAndView atualizar(@ModelAttribute(value = "produto") Produto produto, Errors errors, ModelMap modelMap) {
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return new ModelAndView("login/expirado");
+	public ModelAndView atualizar(@ModelAttribute(value = "produto") Produto produto, Errors errors, ModelMap modelMap,
+								  HttpServletRequest req) {
 		
 		ModelAndView mv = new ModelAndView("produto/atualizar");
 		modelMap.addAttribute("produto", produto);
@@ -102,6 +97,7 @@ public class ProdutoController {
 		if(errors.hasErrors()){
 			return mv;
 		} else {
+			produto.setUsuario(userService.findByUsername(req.getRemoteUser()));
 			produtoServiceImpl.saveOrUpdate(produto);
 			mv.addObject("mensagem", "Dados atualizados com sucesso!");
 		}
@@ -109,55 +105,43 @@ public class ProdutoController {
 		return mv;
 		
 	}
-	
+
 	@RequestMapping(value = "/excluir/{codigo}", method =RequestMethod.GET)
-	public String excluir(@PathVariable(value = "codigo") String codigo, ModelMap modelMap){
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return "redirect:/login/expirado";
-		
-		produtoServiceImpl.deleteLogic(codigo);
+	public String excluir(@PathVariable(value = "codigo") String codigo, ModelMap modelMap, HttpServletRequest req) {
+		Usuario usuario = userService.findByUsername(req.getRemoteUser());
+		produtoServiceImpl.deleteLogic(codigo, usuario);
 		return "redirect:/produto/listar";
-		
 	}
 	
 	@RequestMapping(value = "/listar", method = RequestMethod.GET)
-	public String listar(ModelMap modelMap) {
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return "login/expirado";
-		
-		modelMap.addAttribute("produtos", produtoServiceImpl.findAllActive());
+	public String listar(ModelMap modelMap, HttpServletRequest req) {
+		Usuario usuario = userService.findByUsername(req.getRemoteUser());
+		modelMap.addAttribute("produtos", produtoServiceImpl.findAllActiveByUser(usuario.getId()));
 		modelMap.addAttribute("dto", new PesquisarProdutoDTO());
 		return "produto/listar";
-		
 	}
 	
 	@RequestMapping(value = "/visualizar/{codigo}", method = RequestMethod.GET)
-	public String visualizar(@PathVariable(value = "codigo") String codigo, ModelMap modelMap){
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return "login/expirado";
-		
-		modelMap.addAttribute("produto", produtoServiceImpl.findByCodigoAndActive(codigo));
+	public String visualizar(@PathVariable(value = "codigo") String codigo, ModelMap modelMap, HttpServletRequest req){
+		Usuario usuario = userService.findByUsername(req.getRemoteUser());
+		modelMap.addAttribute("produto", produtoServiceImpl.findByCodigoAndActive(codigo, usuario));
 		return "produto/visualizar";
-		
-	}	
+	}
 	
 	@RequestMapping(value = "/consultar", method = RequestMethod.POST)
-	public String consultaProduto(@ModelAttribute("dto") PesquisarProdutoDTO dto, ModelMap modelMap, HttpSession session) {
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return "login/expirado";
-		
+	public String consultaProduto(@ModelAttribute("dto") PesquisarProdutoDTO dto, ModelMap modelMap,
+								  HttpServletRequest req) {
+
+		Usuario usuario = userService.findByUsername(req.getRemoteUser());
+
 		if ( !"".equals(dto.getNome()) ) {
 			
-			modelMap.addAttribute("produtos", produtoServiceImpl.findByNome(dto. getNome()));
+			modelMap.addAttribute("produtos", produtoServiceImpl.findByNome(dto.getNome(), usuario.getId()));
 			
 		} else if ( !"".equals(dto.getCodigoProduto()) ) {
 			
-			List<Produto> produtos = new ArrayList<Produto>();
-			Produto produto = produtoServiceImpl.findByCodigo(dto.getCodigoProduto());
+			List<Produto> produtos = new ArrayList<>();
+			Produto produto = produtoServiceImpl.findByCodigo(dto.getCodigoProduto(), usuario.getId());
 			
 			if (produto != null)
 				produtos.add(produto);
@@ -165,7 +149,7 @@ public class ProdutoController {
 			modelMap.addAttribute("produtos", produtos);
 			
 		} else { 
-			modelMap.addAttribute("produtos", produtoServiceImpl.findAllActive());
+			modelMap.addAttribute("produtos", produtoServiceImpl.findAllActiveByUser(usuario.getId()));
 		}
 			
 	    modelMap.addAttribute("dto", new PesquisarProdutoDTO());		

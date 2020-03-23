@@ -2,6 +2,7 @@ package com.aplinotech.cadastrocliente.service.impl;
 
 import java.util.List;
 
+import com.aplinotech.cadastrocliente.model.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +24,8 @@ public class ProdutoServiceImpl implements ProdutoService {
 	}
 
 	@Override
-	public void deleteLogic(String codigo) {
-		Produto produto = produtoRepository.findByCodigoAndActive(codigo);
+	public void deleteLogic(String codigo, Usuario usuario) {
+		Produto produto = produtoRepository.findByCodigoAndActive(codigo, usuario.getId());
 		produto.setStatus("I");
 		saveOrUpdate(produto);
 	}
@@ -35,8 +36,8 @@ public class ProdutoServiceImpl implements ProdutoService {
 	}
 	
 	@Override
-	public Produto findByCodigoAndActive(String codigo) {
-		return produtoRepository.findByCodigoAndActive(codigo);
+	public Produto findByCodigoAndActive(String codigo, Usuario usuario) {
+		return produtoRepository.findByCodigoAndActive(codigo, usuario.getId());
 	}
 
 	@Override
@@ -48,15 +49,20 @@ public class ProdutoServiceImpl implements ProdutoService {
 	public List<Produto> findAllActive() {
 		return produtoRepository.findAllActive();
 	}
-	
+
 	@Override
-	public List<Produto> findByNome(String nome) {
-		return produtoRepository.findByNome(nome);
+	public List<Produto> findAllActiveByUser(Long idUsuario) {
+		return produtoRepository.findAllActiveByUser(idUsuario);
 	}
 	
 	@Override
-	public Produto findByCodigo(String codigo) {
-		return produtoRepository.findByCodigo(codigo);
+	public List<Produto> findByNome(String nome, Long idUsuario) {
+		return produtoRepository.findByNome(nome, idUsuario);
+	}
+	
+	@Override
+	public Produto findByCodigo(String codigo, Long idUsuario) {
+		return produtoRepository.findByCodigo(codigo, idUsuario);
 	}
 
 }
