@@ -14,7 +14,9 @@ import com.aplinotech.cadastrocliente.model.ItemBaixa;
 @Repository
 public interface BaixaRepository extends JpaRepository<Baixa, Long> {
 	
-    @Query(value="SELECT i FROM ItemBaixa i WHERE baixa.data BETWEEN :dataInicio AND :dataFim")
-    List<ItemBaixa> findByDates(@Param("dataInicio") Date dataInicio, @Param("dataFim") Date dataFim);
+    @Query(value="SELECT i FROM ItemBaixa i WHERE baixa.data BETWEEN :dataInicio AND :dataFim AND i.usuario.id = :idUsuario")
+    List<ItemBaixa> findByDates(@Param("dataInicio") Date dataInicio,
+                                @Param("dataFim") Date dataFim,
+                                @Param("idUsuario") Long idUsuario);
 
 }

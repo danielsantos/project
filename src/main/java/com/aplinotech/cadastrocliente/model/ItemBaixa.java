@@ -1,5 +1,7 @@
 package com.aplinotech.cadastrocliente.model;
 
+import lombok.Data;
+
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -11,6 +13,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 @Entity
+@Data
 public class ItemBaixa {
 
 	@Id
@@ -29,6 +32,9 @@ public class ItemBaixa {
 	
 	@Column
 	private Integer quantidade;
+
+	@OneToOne
+	private Usuario usuario;
 	
 	@Transient
 	private String dataFormatada;
@@ -36,57 +42,4 @@ public class ItemBaixa {
 	@Transient
 	private BigDecimal valorUnitarioTotal = BigDecimal.ZERO;
 
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Baixa getBaixa() {
-		return baixa;
-	}
-
-	public void setBaixa(Baixa baixa) {
-		this.baixa = baixa;
-	}
-
-	public Produto getProduto() {
-		return produto;
-	}
-
-	public void setProduto(Produto produto) {
-		this.produto = produto;
-	}
-
-	public BigDecimal getValorUnitario() {
-		return valorUnitario;
-	}
-
-	public void setValorUnitario(BigDecimal valorUnitario) {
-		this.valorUnitario = valorUnitario;
-	}
-
-	public Integer getQuantidade() {
-		return quantidade;
-	}
-
-	public void setQuantidade(Integer quantidade) {
-		this.quantidade = quantidade;
-	}
-
-	public String getDataFormatada() {
-		return dataFormatada;
-	}
-
-	public void setDataFormatada(String dataFormatada) {
-		this.dataFormatada = dataFormatada;
-	}
-	
-	public BigDecimal getValorUnitarioTotal() {
-		return valorUnitario.multiply(new BigDecimal(quantidade));
-	}
-	
 }

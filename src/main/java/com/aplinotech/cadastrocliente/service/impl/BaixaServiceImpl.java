@@ -3,6 +3,7 @@ package com.aplinotech.cadastrocliente.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import com.aplinotech.cadastrocliente.model.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +44,8 @@ public class BaixaServiceImpl implements BaixaService {
 	
 
 	@Override
-	public List<ItemBaixa> findByDates(Date dataInicio, Date dataFim) {
-		return baixaRepository.findByDates(dataInicio, dataFim);
+	public List<ItemBaixa> findByDates(Date dataInicio, Date dataFim, Usuario usuario) {
+		return baixaRepository.findByDates(dataInicio, dataFim, usuario.getId());
 	}
 
 }

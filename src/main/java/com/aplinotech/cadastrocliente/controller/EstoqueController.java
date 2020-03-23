@@ -46,20 +46,15 @@ public class EstoqueController {
 	private UserService userService;
 
 
-	@RequestMapping(value = "/entrada")
+	@GetMapping("/entrada")
 	public ModelAndView entrada(){
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return new ModelAndView("login/expirado");
-		
 		ModelAndView mv = new ModelAndView("produto/entrada");
 		mv.addObject("dto", new PesquisarProdutoDTO());
 		mv.addObject("produto", new Produto());
 		return mv;
-		
 	}
 	
-	@RequestMapping(value = "/entrada/pesquisar", method = RequestMethod.POST)
+	@PostMapping("/entrada/pesquisar")
 	public ModelAndView entradaPesquisar(@ModelAttribute("dto") PesquisarProdutoDTO dto, HttpServletRequest req) {
 		Usuario usuario = userService.findByUsername(req.getRemoteUser());
 		Produto produto = produtoServiceImpl.findByCodigoAndActive(dto.getCodigoProduto(), usuario);
@@ -69,12 +64,8 @@ public class EstoqueController {
 		return mv;
 	}
 	
-	@RequestMapping(value = "/entrada/salvar", method = RequestMethod.POST)
+	@PostMapping("/entrada/salvar")
 	public ModelAndView entradaSalvar(@ModelAttribute(value = "produto") Produto produto) {
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return new ModelAndView("login/expirado");
-
 		Produto produtoBanco = produtoServiceImpl.findById(produto.getId());
 		produtoBanco.setValorVendaUnitario(produto.getValorVendaUnitario());
 		produtoBanco.setCustoUnitario(produto.getCustoUnitario());
@@ -96,10 +87,9 @@ public class EstoqueController {
  		mv.addObject("produto", new Produto());
  		mv.addObject("mensagem", "Entrada de Estoque efetuada com sucesso!");
  		return mv;
- 		
 	}
 	
-	@RequestMapping(value = "/removeProdutoBaixa/{id}", method = RequestMethod.GET)
+	@GetMapping("/removeProdutoBaixa/{id}")
 	public ModelAndView removeProdutoBaixa(@PathVariable(value = "id") Long id, HttpSession session) {
 		
 		if (setupServiceImpl.sistemaExpirou()) 
@@ -134,7 +124,7 @@ public class EstoqueController {
 		
 	}
 	
-	@RequestMapping(value = "/registrarBaixa", method = RequestMethod.GET)
+	@GetMapping("/registrarBaixa")
 	public ModelAndView registrarBaixa(HttpSession session) {
 		
 		if (setupServiceImpl.sistemaExpirou()) 
@@ -172,7 +162,7 @@ public class EstoqueController {
 		
 	}
 	
-	@RequestMapping(value = "/baixa/add", method = RequestMethod.POST)
+	@PostMapping("/baixa/add")
 	public String baixaAddProd(@ModelAttribute("produto") Produto produto, ModelMap modelMap, HttpSession session) {
 		
 		if (setupServiceImpl.sistemaExpirou()) 
@@ -274,7 +264,7 @@ public class EstoqueController {
 		
 	}
 	
-	@RequestMapping("/retorna/produto/{codigo}") 
+	@GetMapping("/retorna/produto/{codigo}")
 	public String retornaProdutoPesquisadoPorNome(@PathVariable(value = "codigo") String codigo, ModelMap modelMap,
 												  HttpSession session, HttpServletRequest req) {
 
@@ -312,7 +302,7 @@ public class EstoqueController {
 		
 	}
 	
-	@RequestMapping(value = "/baixa", method = RequestMethod.GET)
+	@GetMapping("/baixa")
 	public String baixa(ModelMap modelMap, HttpSession session) {
 		
 		Baixa baixa = new Baixa();
@@ -345,7 +335,7 @@ public class EstoqueController {
 		return "produto/baixa";
 	}
 	
-	@RequestMapping(value = "/consultar/produto/nome/form")
+	@GetMapping(value = "/consultar/produto/nome/form")
 	public ModelAndView consultaProdutoForm() {
 		ModelAndView mv = new ModelAndView("estoque/listar");
 		mv.addObject("produtos", new ArrayList<Produto>());

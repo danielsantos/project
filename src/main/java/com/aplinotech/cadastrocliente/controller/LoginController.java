@@ -1,17 +1,16 @@
 package com.aplinotech.cadastrocliente.controller;
 
+import com.aplinotech.cadastrocliente.model.Setup;
+import com.aplinotech.cadastrocliente.model.dto.AtivacaoDTO;
+import com.aplinotech.cadastrocliente.service.impl.SetupServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.aplinotech.cadastrocliente.model.Setup;
-import com.aplinotech.cadastrocliente.model.dto.AtivacaoDTO;
-import com.aplinotech.cadastrocliente.service.impl.SetupServiceImpl;
 
 @Controller
 public class LoginController {
@@ -21,12 +20,17 @@ public class LoginController {
 	@Autowired
 	private SetupServiceImpl setupServiceImpl;
 
-	@RequestMapping(value = "/login")
+	@GetMapping("/login")
 	public String login(@AuthenticationPrincipal User user) {
 		return "login/login";
 	}
-	
-	@RequestMapping(value = "/ativar", method = RequestMethod.GET)
+
+	@GetMapping("/cadastrese/form")
+	public String cadastrese() {
+		return "login/cadastrese";
+	}
+
+	@GetMapping("/ativar")
 	public ModelAndView ativar() {
 		
 		Setup setup = setupServiceImpl.find();
@@ -41,8 +45,8 @@ public class LoginController {
 		mv.addObject("obj", new AtivacaoDTO());
 		return mv;
 	}
-	
-	@RequestMapping(value = "/ativar", method = RequestMethod.POST)
+
+	@PostMapping("/ativar")
 	public ModelAndView ativarok(@ModelAttribute(value = "obj") AtivacaoDTO obj) {
 		
 		ModelAndView mv = new ModelAndView("util/home");

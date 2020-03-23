@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.aplinotech.cadastrocliente.model.Baixa;
 import com.aplinotech.cadastrocliente.model.ItemBaixa;
+import com.aplinotech.cadastrocliente.model.Usuario;
 
 public interface BaixaService {
 
@@ -16,6 +17,6 @@ public interface BaixaService {
  
     List<Baixa> findAll();
     
-    List<ItemBaixa> findByDates(Date dataInicio, Date dataFim);
+    List<ItemBaixa> findByDates(Date dataInicio, Date dataFim, Usuario usuario);
  
 }

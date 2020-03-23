@@ -1,5 +1,7 @@
 package com.aplinotech.cadastrocliente.model;
 
+import lombok.Data;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -12,6 +14,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 @Entity
+@Data
 public class Entrada {
 
 	@Id
@@ -33,6 +36,9 @@ public class Entrada {
 	
 	@Column
 	private Date data;
+
+	@OneToOne
+	private Usuario usuario;
 	
 	@Transient
 	private String dataFormatada;
@@ -43,68 +49,4 @@ public class Entrada {
 	@Transient
 	private BigDecimal valorVendaUnitarioTotal;
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Produto getProduto() {
-		return produto;
-	}
-
-	public void setProduto(Produto produto) {
-		this.produto = produto;
-	}
-
-	public Integer getQuantidade() {
-		return quantidade;
-	}
-
-	public void setQuantidade(Integer quantidade) {
-		this.quantidade = quantidade;
-	}
-
-	public BigDecimal getCustoUnitario() {
-		return custoUnitario;
-	}
-
-	public void setCustoUnitario(BigDecimal custoUnitario) {
-		this.custoUnitario = custoUnitario;
-	}
-
-	public BigDecimal getValorVendaUnitario() {
-		return valorVendaUnitario;
-	}
-
-	public void setValorVendaUnitario(BigDecimal valorVendaUnitario) {
-		this.valorVendaUnitario = valorVendaUnitario;
-	}
-
-	public Date getData() {
-		return data;
-	}
-
-	public void setData(Date data) {
-		this.data = data;
-	}
-
-	public String getDataFormatada() {
-		return dataFormatada;
-	}
-
-	public void setDataFormatada(String dataFormatada) {
-		this.dataFormatada = dataFormatada;
-	}
-
-	public BigDecimal getCustoUnitarioTotal() {
-		return custoUnitario.multiply(new BigDecimal(quantidade));
-	}
-
-	public BigDecimal getValorVendaUnitarioTotal() {
-		return valorVendaUnitario.multiply(new BigDecimal(quantidade));
-	}
-	
 }

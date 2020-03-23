@@ -1,25 +1,27 @@
 package com.aplinotech.cadastrocliente.controller;
 
+import com.aplinotech.cadastrocliente.model.Entrada;
+import com.aplinotech.cadastrocliente.model.ItemBaixa;
+import com.aplinotech.cadastrocliente.model.Produto;
+import com.aplinotech.cadastrocliente.model.Usuario;
+import com.aplinotech.cadastrocliente.model.dto.RelatorioDTO;
+import com.aplinotech.cadastrocliente.service.UserService;
+import com.aplinotech.cadastrocliente.service.impl.BaixaServiceImpl;
+import com.aplinotech.cadastrocliente.service.impl.EntradaServiceImpl;
+import com.aplinotech.cadastrocliente.service.impl.ProdutoServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
-
-import com.aplinotech.cadastrocliente.model.Entrada;
-import com.aplinotech.cadastrocliente.model.ItemBaixa;
-import com.aplinotech.cadastrocliente.model.Produto;
-import com.aplinotech.cadastrocliente.model.dto.RelatorioDTO;
-import com.aplinotech.cadastrocliente.service.impl.BaixaServiceImpl;
-import com.aplinotech.cadastrocliente.service.impl.EntradaServiceImpl;
-import com.aplinotech.cadastrocliente.service.impl.ProdutoServiceImpl;
-import com.aplinotech.cadastrocliente.service.impl.SetupServiceImpl;
 
 @Controller
 @RequestMapping("/relatorio")
@@ -33,57 +35,42 @@ public class RelatorioController {
 	
 	@Autowired
 	private ProdutoServiceImpl produtoServiceImpl;
-	
-	@Autowired
-	private SetupServiceImpl setupServiceImpl;
-	
 
-	@RequestMapping("/entrada")
+	@Autowired
+	private UserService userService;
+	
+	@GetMapping("/entrada")
 	public ModelAndView entrada() {
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return new ModelAndView("login/expirado");
-		
 		ModelAndView mv = new ModelAndView("relatorio/entrada");
 		mv.addObject("dto", new RelatorioDTO());
 		return mv;
 	}
 	
-	@RequestMapping("/estoque")
+	@GetMapping("/estoque")
 	public ModelAndView estoque() {
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return new ModelAndView("login/expirado");
-		
 		ModelAndView mv = new ModelAndView("relatorio/estoque");
 		return mv;
 	}
 	
-	@RequestMapping("/saida")
+	@GetMapping("/saida")
 	public ModelAndView saida() {
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return new ModelAndView("login/expirado");
-		
 		ModelAndView mv = new ModelAndView("relatorio/saida");
 		mv.addObject("dto", new RelatorioDTO());
 		return mv;
 	}
-	
-	
-	@RequestMapping("/entrada/gerar")
-	public ModelAndView entradaGerar(@ModelAttribute("dto") RelatorioDTO dto) {
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return new ModelAndView("login/expirado");
-		
+
+	@GetMapping("/entrada/gerar")
+	public ModelAndView entradaGerar(@ModelAttribute("dto") RelatorioDTO dto, HttpServletRequest req) {
+
+		Usuario usuario = userService.findByUsername(req.getRemoteUser());
 		ModelAndView mv = new ModelAndView("relatorio/entradarel");
 		
 		SimpleDateFormat sdfBD = new SimpleDateFormat("dd/MM/yyyy");
-		List<Entrada> list = new ArrayList<Entrada>();
+		List<Entrada> list = new ArrayList<>();
 		
 		try {
-			list = entradaServiceImpl.findByDates(sdfBD.parse(dto.getDataInicio()), sdfBD.parse(dto.getDataFim()));
+			list = entradaServiceImpl.findByDates(
+					sdfBD.parse(dto.getDataInicio()), sdfBD.parse(dto.getDataFim()), usuario);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -107,19 +94,20 @@ public class RelatorioController {
 		return mv;
 	}
 	
-	@RequestMapping("/saida/gerar")
-	public ModelAndView saidaGerar(@ModelAttribute("dto") RelatorioDTO dto) {
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return new ModelAndView("login/expirado");
-		
+	@GetMapping("/saida/gerar")
+	public ModelAndView saidaGerar(@ModelAttribute("dto") RelatorioDTO dto, HttpServletRequest req) {
+
+		Usuario usuario = userService.findByUsername(req.getRemoteUser());
 		ModelAndView mv = new ModelAndView("relatorio/saidarel");
 		
 		SimpleDateFormat sdfBD = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		List<ItemBaixa> list = new ArrayList<ItemBaixa>();
 		
 		try {
-			list = baixaServiceImpl.findByDates(sdfBD.parse(dto.getDataInicio() + " 00:00:00"), sdfBD.parse(dto.getDataFim() + " 23:59:59"));
+			list = baixaServiceImpl.findByDates(
+					sdfBD.parse(dto.getDataInicio() + " 00:00:00"),
+					sdfBD.parse(dto.getDataFim() + " 23:59:59"),
+					usuario);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -140,12 +128,9 @@ public class RelatorioController {
 		return mv;
 	}
 	
-	@RequestMapping("/estoque/gerar")
+	@GetMapping("/estoque/gerar")
 	public ModelAndView estoqueGerar() {
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return new ModelAndView("login/expirado");
-		
+
 		ModelAndView mv = new ModelAndView("relatorio/estoquerel");
 		List<Produto> list = produtoServiceImpl.findAllActive();
 		
