@@ -15,7 +15,7 @@ import com.aplinotech.cadastrocliente.model.Usuario;
 @Repository
 public interface UserRepository extends JpaRepository<Usuario, Long> {
 
-    @Query(value="SELECT u FROM Usuario u WHERE u.username = :username")
+    @Query(value="SELECT u FROM Usuario u WHERE u.username = :username AND u.status = 'A'")
     Usuario findByUsernameAndActive(@Param("username") String username);
 	
 	List<Usuario> findByNome(String nome);
@@ -26,8 +26,11 @@ public interface UserRepository extends JpaRepository<Usuario, Long> {
     void insereRole();
 	
 	@Modifying
-	@Query(value="INSERT INTO USUARIO_ROLE ( USUARIO_ID , ROLE_ID ) VALUES ( 1 , 1 )", nativeQuery = true)
+	@Query(value="INSERT INTO USUARIO_ROLE ( USUARIO_ID , ROLE_ID ) VALUES ( :idUsuario , 1 )", nativeQuery = true)
 	@Transactional
-    void insereUsuarioRole();
+    void insereUsuarioRole(@Param("idUsuario") Long idUsuario);
+
+	@Query("SELECT u FROM Usuario u WHERE u.token = :token AND u.status = 'I'")
+	Usuario findByToken(@Param("token") String token);
 	
 }

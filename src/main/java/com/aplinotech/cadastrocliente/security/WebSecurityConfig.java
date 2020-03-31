@@ -40,7 +40,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-			.antMatchers("/instalar","/ativar", "/cadastrese/form").permitAll()
+			.antMatchers(
+					"/instalar",
+					"/ativar",
+					"/cadastrese/form",
+					"/cadastrese",
+					"/confirmaCadastro/{token}").permitAll()
 			.anyRequest()
 			.authenticated()
 			.and().formLogin().loginPage("/login").defaultSuccessUrl("/")

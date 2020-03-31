@@ -12,6 +12,12 @@
 			<div class="aw-simple-panel__message">
 				Por favor, faça o login.
 			</div>
+
+			<div class="aw-simple-panel__message  is-error" th:if="${msgSucesso != null}">
+				<div class="alert alert-success">
+					<strong><span th:text="${msgSucesso}"></span></strong>
+				</div>
+			</div>
 			
 			<div class="aw-simple-panel__message  is-error" th:if="${!#strings.isEmpty(msgError)}">
 				<div class="alert alert-danger">
@@ -30,8 +36,7 @@
   					<strong>Sucesso!</strong> Usuário deslogado.
 				</div>
 			</div>
-			
-			
+
 			<div class="aw-simple-panel__box">
 				<div class="form-group  has-feedback">
 					<input type="text" class="form-control  input-lg" placeholder="Usuário" autofocus="autofocus" name="username"/>
