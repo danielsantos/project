@@ -1,6 +1,8 @@
 package com.aplinotech.cadastrocliente.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -8,6 +10,8 @@ import java.util.Set;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Usuario {
 
 	@Id
@@ -18,8 +22,12 @@ public class Usuario {
 	@Column(length = 100)
 	private String nome;
 	
-	@Column
 	private String username;
+	private String password;
+	private String status;
+	private Date dataCadastro;
+	private String token;
+	private Date dataAtivacao;
 
 	@Column(length = 80)
 	private String email;
@@ -27,21 +35,8 @@ public class Usuario {
 	@Transient
 	private String confirmeEmail;
 
-	@Column
-	private String password;
-
-	@Column
-	private String status;
-
-	@Column
-	private Date dataCadastro;
-
 	@Transient
 	private String passwordConfirm;
-
-	private String token;
-
-	private Date dataAtivacao;
 
 	@ManyToMany
 	@JoinTable(name = "usuario_role", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))

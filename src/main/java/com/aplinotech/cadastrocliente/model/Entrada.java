@@ -1,6 +1,9 @@
 package com.aplinotech.cadastrocliente.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -15,6 +18,9 @@ import javax.persistence.Transient;
 
 @Entity
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Entrada {
 
 	@Id
@@ -25,16 +31,9 @@ public class Entrada {
 	@OneToOne
 	private Produto produto;
 	
-	@Column 
 	private Integer quantidade;
-	
-	@Column
 	private BigDecimal custoUnitario = BigDecimal.ZERO;
-	
-	@Column
 	private BigDecimal valorVendaUnitario = BigDecimal.ZERO;
-	
-	@Column
 	private Date data;
 
 	@OneToOne
@@ -48,5 +47,14 @@ public class Entrada {
 
 	@Transient
 	private BigDecimal valorVendaUnitarioTotal;
+
+	public BigDecimal getCustoUnitarioTotal() {
+		return custoUnitario.multiply(new BigDecimal(quantidade));
+	}
+
+	public BigDecimal getValorVendaUnitarioTotal() {
+		return valorVendaUnitario.multiply(new BigDecimal(quantidade));
+	}
+
 
 }

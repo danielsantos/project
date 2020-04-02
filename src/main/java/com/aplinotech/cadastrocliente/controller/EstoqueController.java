@@ -65,7 +65,10 @@ public class EstoqueController {
 	}
 	
 	@PostMapping("/entrada/salvar")
-	public ModelAndView entradaSalvar(@ModelAttribute(value = "produto") Produto produto) {
+	public ModelAndView entradaSalvar(@ModelAttribute(value = "produto") Produto produto, HttpServletRequest req) {
+
+		Usuario usuario = userService.findByUsername(req.getRemoteUser());
+
 		Produto produtoBanco = produtoServiceImpl.findById(produto.getId());
 		produtoBanco.setValorVendaUnitario(produto.getValorVendaUnitario());
 		produtoBanco.setCustoUnitario(produto.getCustoUnitario());
@@ -73,12 +76,13 @@ public class EstoqueController {
 		
 		produtoServiceImpl.saveOrUpdate(produtoBanco);
 		
-		Entrada entrada = new Entrada();
-		entrada.setCustoUnitario(produto.getCustoUnitario());
-		entrada.setValorVendaUnitario(produto.getValorVendaUnitario());
-		entrada.setProduto(produto);
-		entrada.setQuantidade(produto.getQtdParaBaixa());
-		entrada.setData(new Date());
+		Entrada entrada = Entrada.builder()
+				.custoUnitario(produto.getCustoUnitario())
+			    .valorVendaUnitario(produto.getValorVendaUnitario())
+				.produto(produto)
+				.quantidade(produto.getQtdParaBaixa())
+				.data(new Date())
+				.usuario(usuario).build();
 		
 		entradaServiceImpl.saveOrUpdate(entrada);
 		
@@ -125,10 +129,9 @@ public class EstoqueController {
 	}
 	
 	@GetMapping("/registrarBaixa")
-	public ModelAndView registrarBaixa(HttpSession session) {
-		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return new ModelAndView("login/expirado");
+	public ModelAndView registrarBaixa(HttpSession session, HttpServletRequest req) {
+
+		Usuario usuario = userService.findByUsername(req.getRemoteUser());
 
 		Baixa baixa = (Baixa) session.getAttribute("baixa");
 		baixa.setData(new Date());	
@@ -137,11 +140,12 @@ public class EstoqueController {
 			
 		for ( Produto produto : baixa.getProdutos() ) {
 			
-			ItemBaixa item = new ItemBaixa();
-			item.setProduto(produto);
-			item.setQuantidade(produto.getQtdParaBaixa());
-			item.setBaixa(baixa);
-			item.setValorUnitario(produto.getValorVendaUnitario());
+			ItemBaixa item = ItemBaixa.builder()
+					.produto(produto)
+					.quantidade(produto.getQtdParaBaixa())
+					.baixa(baixa)
+					.valorUnitario(produto.getValorVendaUnitario())
+					.usuario(usuario).build();
 			
 			itemBaixaServiceImpl.saveOrUpdate(item);
 			
@@ -165,10 +169,7 @@ public class EstoqueController {
 	@PostMapping("/baixa/add")
 	public String baixaAddProd(@ModelAttribute("produto") Produto produto, ModelMap modelMap, HttpSession session) {
 		
-		if (setupServiceImpl.sistemaExpirou()) 
-			return "login/expirado";
-		
-		List<Produto> list = new ArrayList<Produto>();
+		List<Produto> list = new ArrayList<>();
 		Baixa baixa = new Baixa();
 		
 		if ( session.getAttribute("baixa") == null ) {
@@ -349,7 +350,7 @@ public class EstoqueController {
 		if ( !"".equals(dto.getNome()) ) {
 			modelMap.addAttribute("produtos", produtoServiceImpl.findByNome(dto.getNome(), usuario.getId()));
 		} else {
-			modelMap.addAttribute("produtos", produtoServiceImpl.findAllActive());
+			modelMap.addAttribute("produtos", produtoServiceImpl.findAllActiveByUser(usuario.getId()));
 		}
 	    modelMap.addAttribute("dto", new PesquisarProdutoDTO());
 		return "estoque/listar";

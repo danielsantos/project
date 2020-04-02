@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -42,7 +43,14 @@ public class RelatorioController {
 	@GetMapping("/entrada")
 	public ModelAndView entrada() {
 		ModelAndView mv = new ModelAndView("relatorio/entrada");
-		mv.addObject("dto", new RelatorioDTO());
+
+		// TODO BUILDER LOMBOK
+		String dataAtual = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+		RelatorioDTO dto = new RelatorioDTO();
+		dto.setDataFim(dataAtual);
+		dto.setDataInicio(dataAtual);
+
+		mv.addObject("dto", dto);
 		return mv;
 	}
 	
@@ -54,23 +62,30 @@ public class RelatorioController {
 	
 	@GetMapping("/saida")
 	public ModelAndView saida() {
+
+		// TODO BUILDER LOMBOK
+		String dataAtual = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+		RelatorioDTO dto = new RelatorioDTO();
+		dto.setDataFim(dataAtual);
+		dto.setDataInicio(dataAtual);
+
 		ModelAndView mv = new ModelAndView("relatorio/saida");
-		mv.addObject("dto", new RelatorioDTO());
+		mv.addObject("dto", dto);
 		return mv;
 	}
 
-	@GetMapping("/entrada/gerar")
+	@PostMapping("/entrada/gerar")
 	public ModelAndView entradaGerar(@ModelAttribute("dto") RelatorioDTO dto, HttpServletRequest req) {
 
 		Usuario usuario = userService.findByUsername(req.getRemoteUser());
 		ModelAndView mv = new ModelAndView("relatorio/entradarel");
 		
-		SimpleDateFormat sdfBD = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat sdfBD = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		List<Entrada> list = new ArrayList<>();
 		
 		try {
 			list = entradaServiceImpl.findByDates(
-					sdfBD.parse(dto.getDataInicio()), sdfBD.parse(dto.getDataFim()), usuario);
+					sdfBD.parse(dto.getDataInicio() + " 00:00:00"), sdfBD.parse(dto.getDataFim() + " 23:59:59"), usuario);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -94,7 +109,7 @@ public class RelatorioController {
 		return mv;
 	}
 	
-	@GetMapping("/saida/gerar")
+	@PostMapping("/saida/gerar")
 	public ModelAndView saidaGerar(@ModelAttribute("dto") RelatorioDTO dto, HttpServletRequest req) {
 
 		Usuario usuario = userService.findByUsername(req.getRemoteUser());
@@ -124,15 +139,16 @@ public class RelatorioController {
 		mv.addObject("list", list);
 		mv.addObject("valorUnitarioTotal", valorUnitarioTotal);
 		mv.addObject("data", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date()));
-		
 		return mv;
 	}
 	
-	@GetMapping("/estoque/gerar")
-	public ModelAndView estoqueGerar() {
+	@PostMapping("/estoque/gerar")
+	public ModelAndView estoqueGerar(HttpServletRequest req) {
+
+		Usuario usuario = userService.findByUsername(req.getRemoteUser());
 
 		ModelAndView mv = new ModelAndView("relatorio/estoquerel");
-		List<Produto> list = produtoServiceImpl.findAllActive();
+		List<Produto> list = produtoServiceImpl.findAllActiveByUser(usuario.getId());
 		
 		BigDecimal custoUnitarioTotal = new BigDecimal(0);
 		BigDecimal valorVendaUnitarioTotal = new BigDecimal(0);

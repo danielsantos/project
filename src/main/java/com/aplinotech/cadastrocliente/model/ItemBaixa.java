@@ -1,6 +1,9 @@
 package com.aplinotech.cadastrocliente.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
@@ -14,6 +17,9 @@ import javax.persistence.Transient;
 
 @Entity
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemBaixa {
 
 	@Id
@@ -27,10 +33,7 @@ public class ItemBaixa {
 	@OneToOne
 	private Produto produto;
 	
-	@Column
 	private BigDecimal valorUnitario;
-	
-	@Column
 	private Integer quantidade;
 
 	@OneToOne
