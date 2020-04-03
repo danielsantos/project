@@ -72,7 +72,8 @@
 						<label for="input-produto-preco">Código:</label>
 						<div class="form-inline">
 							<input th:field="*{codigoProduto}" type="text" class="form-control  aw-form-control-inline-sm" placeholder="Código"/>
-							<button class="btn  btn-primary" type="submit" style="margin-left: 10px">Pesquisar</button>							       
+							<button class="btn  btn-primary" type="submit" style="margin-left: 10px">Pesquisar</button>
+							<a th:href="@{/estoque/entrada/consultar/produto/nome/form}" class="btn  btn-primary" style="margin-left: 10px">Pesquisar Por Nome</a>
 						</div>
 						
 					</div>
