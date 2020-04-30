@@ -31,7 +31,7 @@ public class EmailService {
             Email email = new SimpleEmail();
             email.setHostName("smtp.kinghost.net");
             email.setSmtpPort(587);
-            email.setAuthenticator(new DefaultAuthenticator("contato@estoquesimples.com.br", "*****"));
+            email.setAuthenticator(new DefaultAuthenticator("contato@estoquesimples.com.br", "Prj2020Go"));
             email.setSSL(false);
             email.setFrom("contato@estoquesimples.com.br");
             email.addTo(usuario.getEmail());

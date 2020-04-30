@@ -116,7 +116,7 @@ public class RelatorioController {
 		ModelAndView mv = new ModelAndView("relatorio/saidarel");
 		
 		SimpleDateFormat sdfBD = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-		List<ItemBaixa> list = new ArrayList<ItemBaixa>();
+		List<ItemBaixa> list = new ArrayList<>();
 		
 		try {
 			list = baixaServiceImpl.findByDates(
